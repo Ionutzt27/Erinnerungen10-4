@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10-4 — Schuljahr 2025/2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://unpkg.com/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #141e14;
+    --bg2:       #1c2a1c;
+    --gold:      #c8a84b;
+    --gold-pale: #e2cc8a;
+    --parchment: #f0e6c8;
+    --ink:       #0d160d;
+    --border:    rgba(200,168,75,0.25);
+    --border2:   rgba(200,168,75,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--parchment);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── HERO ─────────────────────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 80px 20px;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(20,30,20,0) 40%, var(--bg) 100%);
+    pointer-events: none;
+  }
+
+  .oak-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .hero-rule-top {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+    margin-bottom: 28px;
+    opacity: 0.6;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+    font-weight: 400;
+    letter-spacing: 0.45em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0.85;
+  }
+
+  .hero-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(7rem, 22vw, 18rem);
+    font-weight: 900;
+    line-height: 0.85;
+    color: var(--parchment);
+    letter-spacing: -0.02em;
+    text-shadow:
+      0 0 120px rgba(200,168,75,0.07),
+      0 2px 0 rgba(0,0,0,0.5);
+  }
+
+  .hero-divider {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 22px 0 18px;
+  }
+
+  .hero-divider::before,
+  .hero-divider::after {
+    content: '';
+    height: 1px;
+    width: 80px;
+    background: var(--gold);
+    opacity: 0.45;
+  }
+
+  .hero-divider-diamond {
+    width: 5px; height: 5px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    opacity: 0.7;
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.55rem);
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.18em;
+    color: var(--gold-pale);
+    opacity: 0.9;
+  }
+
+  .hero-rule-bottom {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to top, transparent, var(--gold));
+    margin-top: 28px;
+    opacity: 0.6;
+  }
+
+  /* ─── ALBUM SECTION ─────────────────────────────────────────────────────── */
+  .album-section {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 60px 28px 120px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 48px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    font-weight: 400;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .add-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--gold);
+    border: none;
+    padding: 11px 28px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    display: none;
+  }
+  .add-btn:hover { background: var(--gold-pale); transform: translateY(-1px); }
+  .add-btn.visible-admin { display: inline-block !important; }
+  
+  .card-delete.hidden { display: none !important; }
+  #file-input { display: none; }
+
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  @media (max-width: 900px) { .media-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .media-grid { grid-template-columns: 1fr; } }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+    border: 1px dashed var(--border);
+    color: var(--gold);
+    opacity: 0.45;
+  }
+  .empty-state p:first-child {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .empty-state p:last-child {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+  }
+
+  /* ─── MEDIA CARD ────────────────────────────────────────────────────────── */
+  .media-card {
+    position: relative;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  }
+  .media-card:hover {
+    border-color: var(--border);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,168,75,0.1);
+  }
+
+  .card-media-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: #0d160d;
+  }
+
+  .card-media-wrap img,
+  .card-media-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  .media-card:hover .card-media-wrap img,
+  .media-card:hover .card-media-wrap video { transform: scale(1.03); }
+
+  .card-delete {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 30px; height: 30px;
+    background: rgba(13,22,13,0.85);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s, background 0.2s;
+    z-index: 3;
+  }
+  .media-card:hover .card-delete { opacity: 1; }
+  .card-delete:hover { background: rgba(200,168,75,0.2); }
+
+  .card-caption-wrap {
+    padding: 16px 18px 18px;
+    border-top: 1px solid var(--border2);
+    position: relative;
+    z-index: 10;
+  }
+
+  .card-caption {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--gold-pale);
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    min-height: 1.5em;
+    line-height: 1.5;
+    transition: color 0.2s;
+    cursor: default;
+    display: block;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+  .card-caption[contenteditable="true"] { cursor: text; }
+  .card-caption:empty::before {
+    content: attr(data-placeholder);
+    color: rgba(226,204,138,0.3);
+    pointer-events: none;
+  }
+
+  .card-caption-hint {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0;
+    margin-top: 6px;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .media-card:hover .card-caption-hint.visible-admin { opacity: 0.4; }
+
+  /* ─── QR BUTTON ─────────────────────────────────────────────────────────── */
+  .qr-fab {
+    position: fixed;
+    bottom: 32px; right: 32px;
+    z-index: 100;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--gold);
+    border: none;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .qr-fab:hover { background: var(--gold-pale); transform: translateY(-2px); }
+
+  /* ─── MODALS CONFIGURATION ─────────────────────────────────────────────── */
+  .modal-overlay, .admin-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(13,22,13,0.92);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    transition: opacity 0.25s ease;
+  }
+
+  .modal-box, .admin-modal-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 48px 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    max-width: min(440px, 92vw);
+    width: 100%;
+  }
+
+  .modal-title, .admin-modal-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+  }
+
+  .admin-modal-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--gold-pale);
+    opacity: 0.75;
+    text-align: center;
+    margin-top: -8px;
+  }
+
+  .modal-divider, .admin-modal-divider {
+    width: 100%; height: 1px;
+    background: var(--border);
+  }
+
+  #qrcode {
+    background: #f0e6c8;
+    padding: 16px;
+    display: block;
+    min-width: 180px;
+    min-height: 180px;
+  }
+
+  .modal-url {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--gold-pale);
+    opacity: 0.7;
+    text-align: center;
+    word-break: break-all;
+  }
+
+  .modal-close, .admin-modal-close {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 11px 28px;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+  }
+  .modal-close:hover, .admin-modal-close:hover { background: rgba(200,168,75,0.1); }
+
+  /* ─── ADMIN DESIGN ──────────────────────────────────────────────────────── */
+  .admin-fab {
+    position: fixed;
+    bottom: 32px; left: 32px;
+    z-index: 100;
+    width: 40px; height: 40px;
+    background: var(--bg2);
+    border: 1px solid rgba(200,168,75,0.2);
+    color: rgba(200,168,75,0.4);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .admin-fab:hover { border-color: var(--gold); color: var(--gold); }
+  .admin-fab.is-admin { border-color: var(--gold); color: var(--ink); background: var(--gold); }
+
+  .admin-pw-field {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--parchment);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    outline: none;
+    width: 100%;
+    padding: 8px;
+    text-align: center;
+    letter-spacing: 0.15em;
+  }
+  .admin-pw-field:focus { border-color: var(--gold); }
+
+  .admin-pw-error {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #c8644b;
+    display: none;
+  }
+
+  .admin-modal-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    color: var(--ink);
+    background: var(--gold);
+    border: none;
+    padding: 12px 36px;
+    cursor: pointer;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+  .admin-modal-btn:hover { background: var(--gold-pale); }
+
+  .admin-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+  .admin-badge.visible { display: flex; }
+  .admin-badge-dot { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; }
+  .admin-logout { background: none; border: none; color: var(--gold); cursor: pointer; opacity: 0.6; font-family: inherit; text-transform: inherit; }
+  .admin-logout:hover { opacity: 1; text-decoration: underline; }
+
+  .site-footer {
+    border-top: 1px solid var(--border2);
+    padding: 32px 28px;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.35;
+  }
+
+  .spinner-wrap { grid-column: 1 / -1; display: flex; justify-content: center; padding: 40px 0; }
+  .spinner { width: 26px; height: 26px; border: 2px solid rgba(200,168,75,0.1); border-left-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <svg class="oak-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g fill="none" stroke="#c8a84b" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke-width="2.2" opacity="0.75" d="M -20,820 C 60,760 130,700 210,640 C 300,570 380,510 460,455 C 540,398 610,355 690,320 C 740,297 780,282 720,350"/>
+      <path stroke-width="1.6" opacity="0.65" d="M 110,740 C 90,700 80,665 95,635"/>
+      <path stroke-width="1.3" opacity="0.7" d="M 95,635 C 75,618 55,622 42,610 C 56,600 70,597 80,604 C 68,585 60,568 68,550 C 80,565 88,578 88,596 C 98,575 108,560 122,552 C 122,568 115,582 103,592 C 118,580 132,576 144,582 C 136,594 122,600 108,597 C 115,610 113,626 104,635 Z"/>
+      <path stroke-width="1.6" opacity="0.65" d="M 200,670 C 178,638 168,608 178,580"/>
+      <path stroke-width="1.3" opacity="0.7" d="M 178,580 C 158,562 138,566 124,552 C 140,540 156,537 167,546 C 154,526 148,508 158,490 C 170,506 178,520 176,540 C 188,518 200,502 215,496 C 214,513 206,528 194,538 C 210,526 225,522 238,528 C 230,541 215,548 200,544 C 208,558 205,576 196,585 Z"/>
+      <path stroke-width="2.2" opacity="0.75" d="M 1460,820 C 1380,760 1310,700 1230,640 C 1140,570 1060,510 980,455 C 900,398 830,355 750,320 C 700,297 660,282 720,350"/>
+      <path stroke-width="1.6" opacity="0.65" d="M 1330,740 C 1350,700 1360,665 1345,635"/>
+      <path stroke-width="1.3" opacity="0.7" d="M 1345,635 C 1365,618 1385,622 1398,610 C 1384,600 1370,597 1360,604 C 1372,585 1380,568 1372,550 C 1360,565 1352,578 1352,596 C 1342,575 1332,560 1318,552 C 1318,568 1325,582 1337,592 C 1322,580 1308,576 1296,582 C 1304,594 1318,600 1332,597 C 1325,610 1327,626 1336,635 Z"/>
+    </g>
+  </svg>
+
+  <div class="hero-content">
+    <div class="hero-rule-top"></div>
+    <p class="hero-eyebrow">Klassengemeinschaft</p>
+    <h1 class="hero-title">10-4</h1>
+    <div class="hero-divider"><div class="hero-divider-diamond"></div></div>
+    <p class="hero-subtitle">Schuljahr 2025/2026</p>
+    <div class="hero-rule-bottom"></div>
+  </div>
+</section>
+
+<main class="album-section" id="album">
+  <div class="section-header">
+    <h2 class="section-title">Erinnerungen</h2>
+    
+    <div class="admin-badge" id="admin-badge">
+      <div class="admin-badge-dot"></div>
+      <span>Admin Modus</span>
+      <span style="margin: 0 4px; opacity:0.3;">•</span>
+      <button class="admin-logout" id="admin-logout-btn">Abmelden</button>
+    </div>
+
+    <button class="add-btn" id="add-btn">Hinzufügen</button>
+    <input type="file" id="file-input" accept="image/*,video/*" multiple>
+  </div>
+
+  <div class="media-grid" id="media-grid">
+    <div class="spinner-wrap"><div class="spinner"></div></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <p>© 2026 — Klasse 10-4</p>
+</footer>
+
+<button class="qr-fab" id="qr-fab">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+  <span>Teilen</span>
+</button>
+
+<div class="modal-overlay" id="qr-modal">
+  <div class="modal-box">
+    <p class="modal-title">Album Teilen</p>
+    <div class="modal-divider"></div>
+    <div id="qrcode"></div>
+    <p class="modal-url" id="modal-url-text"></p>
+    <button class="modal-close" id="modal-close-btn">Schließen</button>
+  </div>
+</div>
+
+<button class="admin-fab" id="admin-fab">👤</button>
+
+<div class="admin-modal-overlay" id="admin-modal">
+  <div class="admin-modal-box">
+    
+    <div id="admin-login-view" style="display:flex; flex-direction:column; align-items:center; gap:24px; width:100%;">
+      <p class="admin-modal-title">Administratorzugang</p>
+      <p class="admin-modal-subtitle">Bitte Passwort eingeben</p>
+      <div class="admin-modal-divider"></div>
+      <input class="admin-pw-field" type="password" id="admin-pw-input" placeholder="••••••••">
+      <p class="admin-pw-error" id="admin-pw-error">Falsches Passwort</p>
+      <button class="admin-modal-btn" id="admin-login-btn">Anmelden</button>
+      <button class="modal-close" id="admin-modal-close-login">Abbrechen</button>
+    </div>
+
+    <div id="admin-active-view" style="display:none; flex-direction:column; align-items:center; gap:24px; width:100%;">
+      <p class="admin-modal-title">Admin Sitzung aktiv</p>
+      <p class="admin-modal-subtitle">Rechte zum Hochladen und Löschen sind freigeschaltet.</p>
+      <div class="admin-modal-divider"></div>
+      <button class="admin-modal-btn" style="background:transparent; border:1px solid var(--border); color:var(--gold);" id="admin-modal-logout-btn">Abmelden</button>
+      <button class="modal-close" id="admin-modal-close-active">Schließen</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // === HIER DEINE GEHEIMEN DATEN EINTRAGEN ===
+  const SUPABASE_URL = "https://elqlsyqkutxcgpwoehgw.supabase.co"; // Sauber ohne Pfade am Ende!
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscWxzeXFrdXR4Y2dwd29laGd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzU5OTQsImV4cCI6MjA5Njk1MTk5NH0.Rbn5woosSXQTwST5dki60P2CdLwfax2lqQdhh0wHh3s"; 
+  const ADMIN_PASS = "ion271";
+
+  const { createClient } = window.supabase;
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let isAdmin = false;
+  let saveTimeouts = {};
+
+  // DOM Elemente abrufen
+  const grid = document.getElementById('media-grid');
+  const addBtn = document.getElementById('add-btn');
+  const fileInput = document.getElementById('file-input');
+  
+  const qrFab = document.getElementById('qr-fab');
+  const qrModal = document.getElementById('qr-modal');
+  const qrCloseBtn = document.getElementById('modal-close-btn');
+  const modalUrlText = document.getElementById('modal-url-text');
+  const qrContainer = document.getElementById('qrcode');
+
+  const adminFab = document.getElementById('admin-fab');
+  const adminModal = document.getElementById('admin-modal');
+  const adminLoginView = document.getElementById('admin-login-view');
+  const adminActiveView = document.getElementById('admin-active-view');
+  const adminPwInput = document.getElementById('admin-pw-input');
+  const adminPwError = document.getElementById('admin-pw-error');
+  const adminLoginBtn = document.getElementById('admin-login-btn');
+  const adminCloseLogin = document.getElementById('admin-modal-close-login');
+  const adminCloseActive = document.getElementById('admin-modal-close-active');
+  const headerAdminBadge = document.getElementById('admin-badge');
+  const headerLogoutBtn = document.getElementById('admin-logout-btn');
+  const modalLogoutBtn = document.getElementById('admin-modal-logout-btn');
+
+  // Galerie laden
+  async function loadGallery() {
+    try {
+      const { data, error } = await supabase.from('memories').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      grid.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><p>Noch keine Erinnerungen</p><p>Füge Fotos und Videos hinzu.</p></div>`;
+        return;
+      }
+
+      data.forEach(item => {
+        const { data: urlData } = supabase.storage.from('photos').getPublicUrl(item.file_path);
+        const card = createCardElement(item, urlData.publicUrl);
+        grid.appendChild(card);
+      });
+    } catch (err) {
+      console.error(err);
+      grid.innerHTML = `<div class="empty-state"><p>Fehler beim Laden</p></div>`;
+    }
+  }
+
+  function createCardElement(item, publicUrl) {
+    const card = document.createElement('div');
+    card.className = 'media-card';
+    
+    let mediaHTML = item.media_type && item.media_type.startsWith('video/') 
+      ? `<video src="${publicUrl}" controls playsinline preload="metadata"></video>`
+      : `<img src="${publicUrl}" loading="lazy">`;
+
+    card.innerHTML = `
+      <div class="card-media-wrap">
+        ${mediaHTML}
+        <button class="card-delete ${isAdmin ? '' : 'hidden'}">×</button>
+      </div>
+      <div class="card-caption-wrap">
+        <div class="card-caption" contenteditable="${isAdmin}" data-placeholder="${isAdmin ? 'Beschreibung hinzufügen…' : ''}">${item.caption || ''}</div>
+        <div class="card-caption-hint ${isAdmin ? 'visible-admin' : ''}">Wird live gespeichert...</div>
+      </div>
+    `;
+
+    card.querySelector('.card-delete').addEventListener('click', () => deleteItem(item.id, item.file_path));
+
+    const captionEl = card.querySelector('.card-caption');
+    captionEl.addEventListener('input', (e) => {
+      if (!isAdmin) return;
+      if (saveTimeouts[item.id]) clearTimeout(saveTimeouts[item.id]);
+      saveTimeouts[item.id] = setTimeout(async () => {
+        await supabase.from('memories').update({ caption: e.target.innerText }).eq('id', item.id);
+      }, 1000);
+    });
+
+    return card;
+  }
+
+  // Upload & Delete
+  fileInput.addEventListener('change', async () => {
+    if (!isAdmin) return;
+    const files = fileInput.files;
+    if (!files.length) return;
+
+    for (let file of files) {
+      const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(2,7)}.${file.name.split('.').pop()}`;
+      const { error: sErr } = await supabase.storage.from('photos').upload(uniqueName, file);
+      if (!sErr) {
+        await supabase.from('memories').insert([{ file_path: uniqueName, caption: '', media_type: file.type }]);
+      } else {
+        console.error("Upload error:", sErr);
+      }
+    }
+    fileInput.value = '';
+    loadGallery();
+  });
+
+  async function deleteItem(id, filePath) {
+    if (!isAdmin || !confirm("Löschen?")) return;
+    await supabase.from('memories').delete().eq('id', id);
+    await supabase.storage.from('photos').remove([filePath]);
+    loadGallery();
+  }
+
+  // QR-Code Modal öffnen (Mit Sicherheits-Check für die Bibliothek!)
+  let qrCodeInstance = null;
+  qrFab.addEventListener('click', () => {
+    modalUrlText.textContent = window.location.href;
+    qrModal.style.display = 'flex';
+    
+    if (!qrCodeInstance) {
+      if (typeof QRCode !== 'undefined') {
+        qrCodeInstance = new QRCode(qrContainer, {
+          text: window.location.href,
+          width: 180,
+          height: 180,
+          colorDark: "#0d160d",
+          colorLight: "#f0e6c8",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      } else {
+        qrContainer.innerHTML = "<p style='color:#0d160d;font-family:sans-serif;font-size:12px;text-align:center;padding-top:70px;'>QR-Code-Bibliothek lädt noch... Bitte kurz warten und erneut drücken.</p>";
+      }
+    }
+  });
+
+  qrCloseBtn.addEventListener('click', () => qrModal.style.display = 'none');
+  qrModal.addEventListener('click', (e) => { if (e.target === qrModal) qrModal.style.display = 'none'; });
+
+  // Admin Modal öffnen
+  adminFab.addEventListener('click', () => {
+    adminPwError.style.display = 'none';
+    adminPwInput.value = '';
+    adminModal.style.display = 'flex';
+    
+    if (isAdmin) {
+      adminLoginView.style.display = 'none';
+      adminActiveView.style.display = 'flex';
+    } else {
+      adminLoginView.style.display = 'flex';
+      adminActiveView.style.display = 'none';
+      setTimeout(() => adminPwInput.focus(), 50);
+    }
+  });
+
+  function closeAdminModal() { adminModal.style.display = 'none'; }
+  adminCloseLogin.addEventListener('click', closeAdminModal);
+  adminCloseActive.addEventListener('click', closeAdminModal);
+  adminModal.addEventListener('click', (e) => { if (e.target === adminModal) closeAdminModal(); });
+
+  // Admin Login Logik
+  function handleLogin() {
+    if (adminPwInput.value === ADMIN_PASS) {
+      isAdmin = true;
+      adminFab.classList.add('is-admin');
+      addBtn.classList.add('visible-admin');
+      headerAdminBadge.classList.add('visible');
+      closeAdminModal();
+      loadGallery();
+    } else {
+      adminPwError.style.display = 'block';
+    }
+  }
+
+  adminLoginBtn.addEventListener('click', handleLogin);
+  adminPwInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
+
+  function handleLogout() {
+    isAdmin = false;
+    adminFab.classList.remove('is-admin');
+    addBtn.classList.remove('visible-admin');
+    headerAdminBadge.classList.remove('visible');
+    closeAdminModal();
+    loadGallery();
+  }
+
+  headerLogoutBtn.addEventListener('click', handleLogout);
+  modalLogoutBtn.addEventListener('click', handleLogout);
+  addBtn.addEventListener('click', () => fileInput.click());
+
+  loadGallery();
+});
+</script>
+</body>
+</html>
